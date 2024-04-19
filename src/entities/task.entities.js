@@ -10,8 +10,14 @@ exports.Task = class Task {
     }
 
     validate () {
-        if (this.title.length === 0) {
-            throw Error("Oi oi") // maybe can use validator libraries?
+        // maybe can use validator libraries?
+        let errorMsg = "";
+
+        if (!this.title || !this.title.length) {
+            errorMsg = "Title should not be empty."
+            return [null, errorMsg];
         }
+
+        return [true, null];
     }
 }
