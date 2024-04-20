@@ -1,33 +1,34 @@
-// TODO: connect to postgresql
+const { pool } = require("../../configs/db.config");
+const { tableName } = require("../../entities/task.entities");
+const { dbError, validationError } = require("../../utils/error.utils");
 
-exports.getAllTasks = () => {
-    let error = null; // error should be in { statusCode: 400 , message: "" }
-
-    if (error) {
-        return [null, error]
+exports.getAllTasks = async () => {
+    const sql = `SELECT * FROM ${tableName} ORDER BY id ASC`;
+    try {
+        const dbResult = await pool.query(sql);
+        return [dbResult.rows, null];
+    } catch (error) {
+        const dbErr = dbError(error.message);
+        return [null, dbErr];
     }
-
-    return [
-        [
-            {title: "Aiman Special", description: "He is from the state", status: "To-Do"},
-            {title: "Megan Chong", description: "She was a girl from the state", status: "In Progress"}
-        ],
-        null
-    ]
 };
 
-exports.getTaskById = (id) => {
-    let error = null; // error should be in { statusCode: 400 , message: "" }
-
-    if (error) {
-        return [null, error]
+exports.getTaskById = async (id) => {
+    // parse ID to integer since it is stored as integer in DB
+    try {
+        id = parseInt(id);
+    } catch (error) {
+        const validateError = validationError(error.message);
+        return [null, validateError];
     }
 
-    // mock data
-    const tasks = [
-        {title: "Aiman Special", description: "He is from the state", status: "To-Do"},
-        {title: "Megan Chong", description: "She was a girl from the state", status: "In Progress"}
-    ];
+    const sql = `SELECT * FROM ${tableName} WHERE id = $1`;
+    try {
+        const dbResult = await pool.query(sql, [id]);
+        return [dbResult.rows[0], null];
+    } catch (error) {
+        const dbErr = dbError(error.message);
+        return [null, dbErr];
+    }
 
-    return [tasks[id], null]
 }

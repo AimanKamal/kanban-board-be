@@ -1,3 +1,7 @@
+exports.tableName = "tasks";
+
+exports.columnNames = ["title", "description", "status"];
+
 exports.Task = class Task {
     title = "";
     description = "";
@@ -17,7 +21,7 @@ exports.Task = class Task {
             errorMsg = "Title should not be empty."
             return [null, errorMsg];
         }
-
+        
         return [true, null];
     }
 }
